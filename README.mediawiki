@@ -1,5 +1,5 @@
 =eBay GetSingleItem API call in a WordPress short code=
-This plugin is obviously part of what could be a much larger plugin that implements parts of the eBay API for WordPress. All I require is to display basic auction data in a <div>, so that is all this plugin does.
+This plugin is obviously part of what could be a much larger plugin that implements parts of the eBay API for WordPress. All I require is to display basic auction data in a &lt;div&gt;, so that is all this plugin does.
 ==Install==
 * Download the zip
 ** $wget https://github.com/moens/eBay-GetSingleItem-WordPress-Plugin/zipball/master
@@ -7,7 +7,8 @@ This plugin is obviously part of what could be a much larger plugin that impleme
 * activate from wp admin interface
 
 ==Config==
-Use the wp-admin > Settings > eBay GetSingleItem section to set your eBay appid
+Use the wp-admin > Settings > eBay GetSingleItem section to set your eBay appid.
+
 You need an eBay appid, if you don't have one:
 * sign up here: https://www.x.com/developers/ebay
 * login
@@ -15,11 +16,11 @@ You need an eBay appid, if you don't have one:
 * copy / paste the appid into the above Settings location
 
 ==Usage==
-* Create a post
+* Create a WP post
 * Locate the eBay auction you wish to include
 * Find and copy the "Item Number" in the top right of the Description Tab
-* Insert a short code, [eBayItem]130750248056[/eBayItem] in your post.
-* Modify the css & layout.EbayGetSingleItem.php file to finesse style 
+* Insert a short code, <nowiki>[eBayItem]130750248056[/eBayItem]</nowiki> in your post.
+* Modify the css &amp; layout.EbayGetSingleItem.php file to finesse style 
 
 ==Please Steal This Code==
 I have not listed this in the normal WP plugins directory because it is unlikely that 
