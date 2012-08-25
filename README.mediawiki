@@ -1,7 +1,7 @@
 =eBay GetSingleItem API call in a WordPress short code=
 This plugin is obviously part of what could be a much larger plugin that implements parts of the eBay API for WordPress. All I require is to display basic auction data in a &lt;div&gt;, so that is all this plugin does.
 ==Install==
-* create and cd into WEBROOT/wp-content/plugins/eBay-GetSingleItem/
+* create and cd into WEBROOT/wp-content/plugins/ebayGetSingleItem/
 * Download the zip
 ** $wget https://github.com/moens/eBay-GetSingleItem-WordPress-Plugin/zipball/master
 * unzip the goodness
