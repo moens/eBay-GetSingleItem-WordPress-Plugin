@@ -27,5 +27,9 @@ You need an eBay appid, if you don't have one:
 I have not listed this in the normal WP plugins directory because it is unlikely that 
 I will maintain it regularly enough (plus, I hate svn... why can't the WP plugin repo pull 
 from GitHub? Yeah, I could do this --> [http://teleogistic.net/2011/05/revisiting-git-github-and-the-wordpress-org-plugin-repository/ hacker-er than thou]). 
-So... if this looks like a good basis for a plugin that you will maintain, please fork it, 
-upload it on wp.org and maintian it. I'll probably use your version. Thanks!
+[Updated Sept 4, 2012]Look what beuatiful thing I just ran across: 
+[https://github.com/franz-josef-kaiser/WordPress-GitHub-Plugin-Updater github wp plugin updater], thanks, Franz! 
+Anyway... if this looks like a good basis for a plugin that you will maintain, please fork it, 
+upload it on wp.org and maintian it. I might even use your version. Thanks!
+
+~Current Version:0.0.1~
