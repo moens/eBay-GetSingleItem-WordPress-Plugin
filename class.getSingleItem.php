@@ -13,7 +13,7 @@
    License URI: http://www.isc.org/software/license
    */
 
-define('EBAPI_HANDLE', 'ebayApi');
+define('PLUGIN_HANDLE', 'ebayApi');
 define('EBAPI_PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ));
 define('EBAPI_PLUGIN_DIR', substr(plugin_basename(__FILE__), 0, strpos(plugin_basename(__FILE__), '/') -1) ); // this is the name of the folder your plugin lives in
 
@@ -27,6 +27,7 @@ if(!is_admin()) {	// frontend only
 class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 
 	protected $appId = '';
+	protected $ebayApi_options = array();
 	protected $configIssues = array();
 
 	/*--------------------------------------------------*/
@@ -40,24 +41,25 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function __construct() {
 	
-		load_plugin_textdomain( EBAPI_HANDLE, false, EBAPI_PLUGIN_DIR_PATH . '/lang/' );
+		load_plugin_textdomain( PLUGIN_HANDLE, false, EBAPI_PLUGIN_DIR_PATH . '/lang/' );
 		
 		// Manage plugin ativation/deactivation hooks
 //		register_activation_hook( __FILE__, array( &$this, 'activate' ) );
+		// most of what would be done in an activation hook, is done here: setDefaultOptions() 
 		register_deactivation_hook( __FILE__, array( &$this, 'deactivate' ) );
 
 /* used in case of extending widget class...
 		parent::__construct(
-			EBAPI_HANDLE . '-id',
-			__( 'eBay getSingleItem', EBAPI_HANDLE ),
+			PLUGIN_HANDLE . '-id',
+			__( 'eBay getSingleItem', PLUGIN_HANDLE ),
 			array(
-				'classname'	=>	EBAPI_HANDLE . '-class',
-				'description'	=>	__( 'Plugin to display a compact instance of a current eBay auction via shortcode.', EBAPI_HANDLE )
+				'classname'	=>	PLUGIN_HANDLE . '-class',
+				'description'	=>	__( 'Plugin to display a compact instance of a current eBay auction via shortcode.', PLUGIN_HANDLE )
 			)
 		);
 */		
 
-		if( !$this->setAppId() ) $this->setConfigIssues( __('The eBay AppID has not been set, please see Settings > eBay API. Thanks!') );
+		if( !$this->setAppId() ) $this->setConfigIssues( __('The eBay AppID has not been set, please see <a href="options-general.php?page=ebayApi">Settings > eBay API</a>. Thanks!') );
 		if( $this->existsConfigIssues() ) add_action( 'admin_notices', array(&$this, 'getConfigIssues') );
 		
 		// Setup ShortCodes
@@ -218,7 +220,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * @params	$network_wide	True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog 
 	 */
 	public function deactivate( $network_wide ) {
-		$this->setConfigIssues(__('The eBay ApiId set by site admins in Settings > eBayAPI are retained in the database until the plugin is uninstalled.') );
+		$this->setConfigIssues(__('The eBay ApiId set by the site admin in <a href="options-general.php?page=ebayApi">Settings > eBay API</a> is retained in the database until the plugin is uninstalled.') );
 	} // end deactivate
 	
 	
@@ -230,7 +232,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Add plugin specific page to Admin > Settings >
 	 */
 	public function ebayApiSetupMenu() {
-		add_options_page( $page_title = 'eBay API', $menu_title = 'eBay API', $capability = 'manage_options', $menu_slug = EBAPI_HANDLE, $function = array(&$this, 'ebayApiOptions') );
+		add_options_page( $page_title = 'eBay API', $menu_title = 'eBay API', $capability = 'manage_options', $menu_slug = PLUGIN_HANDLE, $function = array(&$this, 'ebayApiOptions') );
 	}
 
 	/**
@@ -244,8 +246,8 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 		<div class="wrap">
 			<h2>Required for the ebayGetSingleItem Plugin</h2>
 			<form action="options.php" method="post">
-			<?php settings_fields($option_group = EBAPI_HANDLE . '_options'); ?>
-			<?php do_settings_sections($page = EBAPI_HANDLE); ?>
+			<?php settings_fields($option_group = PLUGIN_HANDLE . '_options'); ?>
+			<?php do_settings_sections($page = PLUGIN_HANDLE); ?>
 
 			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
 			</form>
@@ -258,10 +260,10 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function ebayApiAdminInit() {
 
-		add_settings_section($id = EBAPI_HANDLE . 'BasicSettings', $title = 'Basic Settings', $callback = array(&$this, 'ebayApiBasicSettingsHeader' ), $page = EBAPI_HANDLE);
+		add_settings_section($id = PLUGIN_HANDLE . 'BasicSettings', $title = 'Basic Settings', $callback = array(&$this, 'ebayApiBasicSettingsHeader' ), $page = PLUGIN_HANDLE);
 
-		register_setting( $option_group = EBAPI_HANDLE . '_options', $option_name = 'appId', $sanitize_callback = array( &$this, 'ebayAppIdValidation' ) );
-		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = array( &$this, 'ebayAppIdInputSring'), $page = EBAPI_HANDLE, $section = EBAPI_HANDLE . 'BasicSettings');
+		register_setting( $option_group = PLUGIN_HANDLE . '_options', $option_name = /*'appId'*/ PLUGIN_HANDLE . '_options', $sanitize_callback = array( &$this, 'ebayAppIdValidation' ) );
+		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = array( &$this, 'ebayAppIdInputSring'), $page = PLUGIN_HANDLE, $section = PLUGIN_HANDLE . 'BasicSettings');
 	}
 
 	/**
@@ -281,10 +283,10 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Form Inputs for the Admin > Settings > eBayApi > Basic Settings section
 	 */
 	public function ebayAppIdInputSring() {
-		$options = get_option(EBAPI_HANDLE . '_options');
-/**/ echo EBAPI_HANDLE . '_options: '; print_r($options);	
+		$options = get_option(PLUGIN_HANDLE . '_options');
+// echo PLUGIN_HANDLE . '_options: '; print_r($options);	
 		?>
-		<input id="ebayAppId" name="<?php echo EBAPI_HANDLE ?>_options[appId]" size="40" type="text" value="<?php echo $options['appId'] ?>" />
+		<input id="ebayAppId" name="<?php echo PLUGIN_HANDLE ?>_options[appId]" size="40" type="text" value="<?php echo $options['appId'] ?>" />
 		<?php
 	}
 
@@ -292,12 +294,12 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Input Validation for the Admin > Settings > eBayApi > Basic Settings > appid field
 	 */
 	public function ebayAppIdValidation($input) {
-		$inputString = '$input is: ' . gettype($input) . ', length is: ' . strlen($input) . ', and json is: ' . json_encode($input);
+//		$debugInput = '$input is type: ' . gettype($input) . ', json sring: ' . json_encode($input);
 
 		$trimmedInput['appId'] = trim($input['appId']);
 		if(!preg_match('/^[a-zA-Z0-9\._-]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$/', $trimmedInput['appId'])) {
 			$trimmedInput['appId'] = '';
-			add_settings_error($setting = 'eBayAppId', $code = 'appid-error', $message = sprintf(__('The AppID you entered (%s) does not appear to be valid. It should contain no spaces and look something like this: MyAccoun-de40-4e7a-b2c2-ac6dedac95ad'), $inputString) );
+			add_settings_error($setting = 'eBayAppId', $code = 'appid-error', $message = sprintf(__('The AppID you entered (%s) does not appear to be valid. It should contain no spaces and look something like this: MyAccoun-de40-4e7a-b2c2-ac6dedac95ad'), $trimmedInput['appId']) );
 		}
 		return $trimmedInput;
 	}
@@ -356,7 +358,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Define and localize js text before including the js. 
 	 * @return localized js strings
 	 */
-/*
+/* removed the pointer... seemed cool, but over-the-top
 	public function localizeJsPointerStrings() {
 	 
 		$pointer_text = '<h3>' . esc_js( __( 'Configure the eBay API') ) . '</h3>';
@@ -402,7 +404,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	/*--------------------------------------------------*/
 
 	public function setAppId() {
-		$options = get_option(EBAPI_HANDLE . '_options');
+		if(!$options = get_option(PLUGIN_HANDLE . '_options')) $this->setDefaultOptions();
 		if(isset($options['appId']) && $options['appId'] != '') {
 			$this->appId = $options['appId'];
 			return TRUE;
@@ -412,6 +414,13 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	
 	public function getAppId() {
 		return $this->appId;
+	}
+
+	public function setDefaultOptions() {
+		$options = array(
+			'appId' => '',
+		);
+		update_option( PLUGIN_HANDLE . '_options', $options );
 	}
 
 	public function setConfigIssues($issueTextString = '') {
@@ -445,7 +454,7 @@ register_uninstall_hook( __FILE__, 'ebayGetSingleItemUninstall' );
  */
 function ebayGetSingleItemUninstall( $network_wide ) {
 	if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) exit ();
-	delete_option(EBAPI_HANDLE . '_option');
+	delete_option(PLUGIN_HANDLE . '_option');
 } // end uninstall
 	
 ?>
