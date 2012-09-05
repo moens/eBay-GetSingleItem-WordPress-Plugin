@@ -101,6 +101,7 @@ class wp_github_updater
 				,'readme_file'        => 'readme.md'
 				 // The default update check interval is set to 12 hours
 				,'update_interval'    => 60*60*12
+				,'description'        => ''
 			)
 		);
 
