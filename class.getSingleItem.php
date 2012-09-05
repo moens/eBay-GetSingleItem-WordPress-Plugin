@@ -230,7 +230,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Add plugin specific page to Admin > Settings >
 	 */
 	public function ebayApiSetupMenu() {
-		add_options_page( $page_title = 'eBay API', $menu_title = 'eBay API', $capability = 'manage_options', $menu_slug = EBAPI_HANDLE, $function = array($this, 'ebayApiOptions') );
+		add_options_page( $page_title = 'eBay API', $menu_title = 'eBay API', $capability = 'manage_options', $menu_slug = EBAPI_HANDLE, $function = array(&$this, 'ebayApiOptions') );
 	}
 
 	/**
@@ -280,6 +280,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function ebayAppIdInputSring() {
 		$options = get_option(EBAPI_HANDLE . '_options');
+		
 		?>
 		<input id="ebayAppId" name="<?php echo EBAPI_HANDLE ?>_options[appId]" size="40" type="text" value="<?php echo $options['appId'] ?>" />
 		<?php
@@ -289,9 +290,9 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Input Validation for the Admin > Settings > eBayApi > Basic Settings > appid field
 	 */
 	public function ebayAppIdValidation($input) {
-		$trimmedInput['text_string'] = trim($input['text_string']);
-		if(!preg_match('/^[a-zA-Z0-9\._-]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$/', $trimmedInput['text_string'])) {
-			$trimmedInput['text_string'] = '';
+		$trimmedInput['appId'] = trim($input['appId']);
+		if(!preg_match('/^[a-zA-Z0-9\._-]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$/', $trimmedInput['appId'])) {
+			$trimmedInput['appId'] = '';
 			add_settings_error('The AppID you entered does not appear to be valid. It should contain no spaces and look something like this: MyAccoun-de40-4e7a-b2c2-ac6dedac95ad');
 		}
 		return $trimmedInput;
@@ -397,7 +398,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	/*--------------------------------------------------*/
 
 	public function setAppId() {
-		$options = get_option('ebayApi_options');
+		$options = get_option(EBAPI_HANDLE . '_options');
 		if(isset($options['appId']) && $options['appId'] != '') {
 			$this->appId = $options['appId'];
 			return TRUE;
