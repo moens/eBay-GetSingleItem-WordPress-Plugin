@@ -32,4 +32,4 @@ from GitHub? Yeah, I could do this --> [http://teleogistic.net/2011/05/revisitin
 Anyway... if this looks like a good basis for a plugin that you will maintain, please fork it, 
 upload it on wp.org and maintian it. I might even use your version. Thanks!
 
-~Current Version:0.0.1~
+~Current Version:0.1.0~
