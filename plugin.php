@@ -13,7 +13,7 @@
    License URI: http://www.isc.org/software/license
    */
 
-require_once(plugin_dir_path( __FILE__ ) . 'classes/update.php'); // load the updater class that allows github updates, see checkGithubUpdates()
+require_once(plugin_dir_path( __FILE__ ) . 'classes/updater.php'); // load the updater class that allows github updates, see checkGithubUpdates()
 
 class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 
@@ -48,11 +48,11 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 			)
 		);
 		
-		if( !$this->setAppId ) $this->setConfigIssues(__('The eBay AppID has not been set, please see Admin > Settings > eBayAPI. Thanks!'));
-		if( $this->existsConfigIssues() ) add_action('admin_notices', $this->getConfigIssues);
+		if( !$this->setAppId ) $this->setConfigIssues( __('The eBay AppID has not been set, please see Admin > Settings > eBayAPI. Thanks!') );
+		if( $this->existsConfigIssues() ) add_action( 'admin_notices', array(&$this, 'getConfigIssues') );
 		
 		// Setup ShortCodes
-		add_shortcode('eBayItem', 'ebayGetSingleItemShortcode');
+		add_shortcode('eBayItem', array( &$this, 'ebayGetSingleItemShortcode' ) );
 
 		// Setup Admin Area
 		add_action( 'admin_menu', array( &$this, 'ebayApiSetupMenu' ) );
@@ -229,13 +229,13 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Add plugin specific page to Admin > Settings >
 	 */
 	protected function ebayApiSetupMenu() {
-		add_options_page( 'eBay Api ID', 'eBay Api ID', 'manage_options', 'ebayApi', array($this, 'ebayApiOptions') );
+		add_options_page( $page_title = 'eBay Api ID', $menu_title = 'eBay Api ID', $capability = 'manage_options', $menu_slug = $this->pluginHandle, $function = array($this, 'ebayApiOptions') );
 	}
 
 	/**
 	 * Output plugin specific page to Admin > Setup > 
 	 */
-	function ebayApiOptions() {
+	protected function ebayApiOptions() {
 		if ( !current_user_can( 'manage_options' ) )  {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
@@ -243,8 +243,8 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 		<div class="wrap">
 			<h2>Required for the ebayGetSingleItem Plugin</h2>
 			<form action="options.php" method="post">
-			<?php settings_fields($this->pluginHandle . '_options'); ?>
-			<?php do_settings_sections($this->pluginHandle); ?>
+			<?php settings_fields($option_group = $this->pluginHandle . '_options'); ?>
+			<?php do_settings_sections($page = $this->pluginHandle); ?>
 
 			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
 			</form>
@@ -256,9 +256,9 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Set up the admin settings menu page options
 	 */
 	protected function ebayApiAdminInit() {
-		register_setting( $option_group = $pluginHandle . '_options', $option_name = 'appId', $sanitize_callback = 'appIdValidation' );
-		add_settings_section($id = 'ebayApiBasicSettings', $title = 'Basic Settings', $callback = 'ebayApiBasicSettingsHeader', $page = $this->pluginHandle);
-		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = 'ebayAppIdInputSring', $page = $this->pluginHandle, $section = 'ebayApiBasicSettings');
+		register_setting( $option_group = $this->pluginHandle . '_options', $option_name = 'appId', $sanitize_callback = array( &$this, 'appIdValidation' ) );
+		add_settings_section($id = 'ebayApiBasicSettings', $title = 'Basic Settings', $callback = array(&$this, 'ebayApiBasicSettingsHeader' ), $page = $this->pluginHandle);
+		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = array( &$this, 'ebayAppIdInputSring'), $page = $this->pluginHandle, $section = 'ebayApiBasicSettings');
 	}
 
 	/**
