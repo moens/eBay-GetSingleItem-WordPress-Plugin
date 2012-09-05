@@ -257,9 +257,11 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Set up the admin settings menu page options
 	 */
 	public function ebayApiAdminInit() {
-		register_setting( $option_group = EBAPI_HANDLE . '_options', $option_name = 'appId', $sanitize_callback = array( &$this, 'appIdValidation' ) );
-		add_settings_section($id = 'ebayApiBasicSettings', $title = 'Basic Settings', $callback = array(&$this, 'ebayApiBasicSettingsHeader' ), $page = EBAPI_HANDLE);
-		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = array( &$this, 'ebayAppIdInputSring'), $page = EBAPI_HANDLE, $section = 'ebayApiBasicSettings');
+
+		add_settings_section($id = EBAPI_HANDLE . 'BasicSettings', $title = 'Basic Settings', $callback = array(&$this, 'ebayApiBasicSettingsHeader' ), $page = EBAPI_HANDLE);
+
+		register_setting( $option_group = EBAPI_HANDLE . '_options', $option_name = 'appId', $sanitize_callback = array( &$this, 'ebayAppIdValidation' ) );
+		add_settings_field($id = 'ebayAppId', $title = 'eBay AppID', $callback = array( &$this, 'ebayAppIdInputSring'), $page = EBAPI_HANDLE, $section = EBAPI_HANDLE . 'BasicSettings');
 	}
 
 	/**
@@ -280,7 +282,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function ebayAppIdInputSring() {
 		$options = get_option(EBAPI_HANDLE . '_options');
-		
+/**/ echo EBAPI_HANDLE . '_options: '; print_r($options);	
 		?>
 		<input id="ebayAppId" name="<?php echo EBAPI_HANDLE ?>_options[appId]" size="40" type="text" value="<?php echo $options['appId'] ?>" />
 		<?php
@@ -290,10 +292,12 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 * Input Validation for the Admin > Settings > eBayApi > Basic Settings > appid field
 	 */
 	public function ebayAppIdValidation($input) {
+		$inputString = '$input is: ' . gettype($input) . ', length is: ' . strlen($input) . ', and json is: ' . json_encode($input);
+
 		$trimmedInput['appId'] = trim($input['appId']);
 		if(!preg_match('/^[a-zA-Z0-9\._-]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$/', $trimmedInput['appId'])) {
 			$trimmedInput['appId'] = '';
-			add_settings_error('The AppID you entered does not appear to be valid. It should contain no spaces and look something like this: MyAccoun-de40-4e7a-b2c2-ac6dedac95ad');
+			add_settings_error($setting = 'eBayAppId', $code = 'appid-error', $message = sprintf(__('The AppID you entered (%s) does not appear to be valid. It should contain no spaces and look something like this: MyAccoun-de40-4e7a-b2c2-ac6dedac95ad'), $inputString) );
 		}
 		return $trimmedInput;
 	}
