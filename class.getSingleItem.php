@@ -112,20 +112,21 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 			$eid = $id;
 		}
 		$url = "http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON" .
-			"&appid=" . $this->getAppId() . "&siteid=0&ItemID=" . $eid . "&version=783";
+			"&appid=" . $this->getAppId() . "&siteid=0&ItemID=" . $eid . "&version=783&IncludeSelector=Description,ItemSpecifics";
 		$json = wp_remote_retrieve_body( wp_remote_get( $url ) );
 		$ebayItemData = json_decode( $json, TRUE );
+//echo'<pre>';print_r($ebayItemData);echo'</pre>';
 
 		//Get pertinent data:
 		// linkURL (string/url)
-		$linkURL = $ebayItemData['ViewItemURLForNaturalSearch'];
+		$linkURL = $ebayItemData['Item']['ViewItemURLForNaturalSearch'];
 		// title (string/text)
-		$title = $ebayItemData['Title'];
-		preg_match_all('/extract>(.*)<\/extract/', $ebayItemData['Description'], $matchData);
+		$title = $ebayItemData['Item']['Title'];
+		preg_match_all('/extract>(.*)<\/extract/', $ebayItemData['Item']['Description'], $matchData);
 		// description (string/html)
-		$description = $matchData[1];
+		$description = $matchData[1][0];
 		// isEnded (bool)
-		$isEnded = ($ebayItamData['ListingStatus'] == 'Completed')?TRUE:FALSE;
+		$isEnded = ($ebayItamData['Item']['ListingStatus'] == 'Completed')?TRUE:FALSE;
 		if(!$isEnded) {
 			date_default_timezone_set('America/Denver');
 			$endingTimeStamp = strtotime($ebayItamData['EndTime']);
@@ -140,21 +141,21 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 			$duration = implode(', ', $durationText);
 		}
 		// bidPrice
-		$bidPrice = (isset($ebayItemData['ConvertedCurrentPrice']['Value']))?$ebayItemData['ConvertedCurrentPrice']['Value']:FALSE;
+		$bidPrice = (isset($ebayItemData['Item']['ConvertedCurrentPrice']['Value']))?$ebayItemData['Item']['ConvertedCurrentPrice']['Value']:FALSE;
 		// isBuyItNow
-		$isBuyItNow = (isset($ebayItemData['BuyItNowAvailable']))?$ebayItemData['BuyItNowAvailable']:FALSE;
+		$isBuyItNow = (isset($ebayItemData['Item']['BuyItNowAvailable']))?$ebayItemData['Item']['BuyItNowAvailable']:FALSE;
 		// buyItNowPrice
-		$buyItNowPrice = (isset($ebayItemData['ConvertedBuyItNowPrice']['Value']))?$ebayItemData['ConvertedBuyItNowPrice']['Value']:FALSE;
+		$buyItNowPrice = (isset($ebayItemData['Item']['ConvertedBuyItNowPrice']['Value']))?$ebayItemData['Item']['ConvertedBuyItNowPrice']['Value']:FALSE;
 		// listingType
-		$listingType = $ebayItemData['ListingType'];
+		$listingType = $ebayItemData['Item']['ListingType'];
 		// isSold
-		$isSold = ( !$isEnded ) ? FALSE : ( ( isset ( $ebayItemData['BidCount'] ) && ( $ebayItemData['BidCount'] > 0 ) ) ? TRUE : FALSE );
+		$isSold = ( !$isEnded ) ? FALSE : ( ( isset ( $ebayItemData['Item']['BidCount'] ) && ( $ebayItemData['Item']['BidCount'] > 0 ) ) ? TRUE : FALSE );
 		//Layout
 ?>
 		<h2><a href="<?php echo $linkURL ?>"><?php echo $title ?></a></h2>
-		<div><?php echo $description ?></div>
+		<div><?php echo json_encode($description) ?></div>
 		<div class="price">
-			<?php _e('Current bid price:') ?> <?php echo $bidPrice ?>
+			<?php _e('Current bid price:') ?> <?php echo '$' . $bidPrice . '.00' ?>
 <?php		if(!$isEnded): // show current bid, buy it now if available, end time and time left ?>
 <?php			if($isBuyItNow && $buyItNowPrice): ?>
 				&nbsp;&mdash;&nbsp;<?php _e('Or buy it now for:') ?> <?php echo $buyItNowPrice ?>
