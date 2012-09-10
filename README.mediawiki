@@ -20,8 +20,8 @@ You need an eBay appid, if you don't have one:
 * Create a WP post
 * Locate the eBay auction you wish to include
 * Find and copy the "Item Number" in the top right of the Description Tab
-* Insert a short code, <nowiki>[eBayItem]130750248056[/eBayItem]</nowiki> in your post.
-* Modify the css &amp; layout.ebayGetSingleItem.php file to finesse style 
+* Insert a short code, <nowiki>[eBayItem]130750248056[/eBayItem] or [eBayItem id="123412341234"]</nowiki> in your post.
+* Modify the css &amp; class.getSingleItemView.php file to finesse style and template 
 
 ==Please Steal This Code==
 I have not listed this in the normal WP plugins directory because it is unlikely that 
