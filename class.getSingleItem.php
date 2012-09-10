@@ -15,7 +15,7 @@
 
 define('PLUGIN_HANDLE', 'ebayApi');
 define('EBAPI_PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ));
-define('EBAPI_PLUGIN_DIR', substr(plugin_basename(__FILE__), 0, strpos(plugin_basename(__FILE__), '/') -1) ); // this is the name of the folder your plugin lives in
+define('EBAPI_PLUGIN_DIR', substr(plugin_basename(__FILE__), 0, strpos(plugin_basename(__FILE__), '/')) ); // this is the name of the folder your plugin lives in
 
 if(!is_admin()) {	// frontend only
 	require_once( EBAPI_PLUGIN_DIR_PATH . 'class.getSingleItemView.php' );
@@ -79,7 +79,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 		}
 	
 		// Register site styles and scripts
-		add_action( 'wp_enqueue_styles', array( &$this, 'register_plugin_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( &$this, 'register_plugin_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this, 'register_plugin_scripts' ) );
 		
 	} // end constructor
@@ -235,7 +235,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function register_admin_styles() {
 	
-		wp_register_style( 'ebayGetSingleItem-admin-styles', plugins_url( 'ebayGetSingleItem/css/admin.css' ) );
+		wp_register_style( 'ebayGetSingleItem-admin-styles', plugins_url( EBAPI_PLUGIN_DIR . '/css/admin.css' ) );
 		wp_enqueue_style( 'ebayGetSingleItem-admin-styles' );
 //		wp_enqueue_style('wp-pointer');
 	
@@ -246,7 +246,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function register_admin_scripts() {
 	
-		wp_register_script( 'ebayGetSingleItem-admin-script', plugins_url( 'ebayGetSingleItem/js/admin.js' ) );
+		wp_register_script( 'ebayGetSingleItem-admin-script', plugins_url( EBAPI_PLUGIN_DIR . '/js/admin.js' ) );
 		wp_enqueue_script( 'ebayGetSingleItem-admin-script', false, array('jquery') );
 //		wp_localize_script( 'ebayGetSingleItem-admin-script', 'strings', $this->localizeJsPointerStrings() );
 
@@ -259,8 +259,8 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	
 	public function register_plugin_styles() {
-	
-		wp_register_style( 'ebayGetSingleItem-plugin-styles', plugins_url( 'ebayGetSingleItem/css/plugin.css' ) );
+error_log('PLUGINS URL >> ' . plugins_url( EBAPI_PLUGIN_DIR . '/css/plugin.css' ));	
+		wp_register_style( 'ebayGetSingleItem-plugin-styles', plugins_url( EBAPI_PLUGIN_DIR . '/css/plugin.css' ) );
 		wp_enqueue_style( 'ebayGetSingleItem-plugin-styles' );
 		
 	} // end register_widget_styles
@@ -270,7 +270,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 	 */
 	public function register_plugin_scripts() {
 	
-		wp_register_script( 'ebayGetSingleItem-plugin-script', plugins_url( 'ebayGetSingleItem/js/plugin.js' ) );
+		wp_register_script( 'ebayGetSingleItem-plugin-script', plugins_url( EBAPI_PLUGIN_DIR . '/js/plugin.js' ) );
 		wp_enqueue_script( 'ebayGetSingleItem-plugin-script' );
 		
 	} // end register_widget_scripts
