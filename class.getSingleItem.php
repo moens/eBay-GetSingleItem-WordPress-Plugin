@@ -120,11 +120,16 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 		//Get pertinent data:
 		// linkURL (string/url)
 		$linkURL = $ebayItemData['Item']['ViewItemURLForNaturalSearch'];
+
 		// title (string/text)
 		$title = $ebayItemData['Item']['Title'];
-		preg_match_all('/extract>(.*)<\/extract/', $ebayItemData['Item']['Description'], $matchData);
+
 		// description (string/html)
-		$description = $matchData[1][0];
+		$description = stripslashes(html_entity_decode($ebayItemData['Item']['Description']));
+//print_r($description);
+		preg_match_all('/desc.*?dl.*?dd>(.*?)<\/dd/s', $description, $matchData);
+		if($matchData[1][0]) $description = $matchData[1][0];
+
 		// isEnded (bool)
 		$isEnded = ($ebayItamData['Item']['ListingStatus'] == 'Completed')?TRUE:FALSE;
 		if(!$isEnded) {
@@ -153,7 +158,7 @@ class ebayGetSingleItem { // extends WP_Widget { <-- this class is not a widget
 		//Layout
 ?>
 		<h2><a href="<?php echo $linkURL ?>"><?php echo $title ?></a></h2>
-		<div><?php echo json_encode($description) ?></div>
+		<div><?php echo $description ?></div>
 		<div class="price">
 			<?php _e('Current bid price:') ?> <?php echo '$' . $bidPrice . '.00' ?>
 <?php		if(!$isEnded): // show current bid, buy it now if available, end time and time left ?>
