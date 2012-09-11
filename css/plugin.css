@@ -1,4 +1,22 @@
 .auctionTemplate h2 {
-	font-size: .5em;
-	line-height: .5em;
+	font-size: 20px;
+	line-height: 23px;
+	padding: 0 0 15px 0;
+}
+
+.auctionTemplate .price {
+	padding-left: 30px;
+}
+
+.auctionTemplate .price span {
+	color: red;
+	font-weight: bolder;
+}
+
+.auctionTemplate .seeAuction {
+	padding-left: 30px;
+}
+
+.auctionTemplate .description {
+	padding: 10px 0 0 0;
 }
