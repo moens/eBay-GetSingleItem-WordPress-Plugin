@@ -1,3 +1,5 @@
+=Broken & Unmaintained=
+Please consider this code to be an "example of concept," but no longer working.
 =eBay GetSingleItem API call in a WordPress short code=
 This plugin is obviously part of what could be a much larger plugin that implements parts of the eBay API for WordPress. All I require is to display basic auction data in a &lt;div&gt;, so that is all this plugin does.
 ==Install==
